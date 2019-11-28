@@ -92,7 +92,7 @@ async function run() {
 
     const reposistoryId = response['data']['repository']['id'];
 
-    query = 'mutation($reposistoryId:Int!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$reposistoryId, base:$base, head:$head})}';
+    query = 'mutation($reposistoryId:Int!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$reposistoryId, base:$base, head:$head}) {mergeCommit {id}}}';
     variables = { reposistoryId, base: target_branch, head: commit_sha };
 
     response = await fetch('https://api.github.com/graphql', {
