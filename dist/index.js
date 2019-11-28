@@ -86,6 +86,7 @@ async function run() {
         'Authorization': `bearer ${github_token}`,
       }
     });
+    console.log(response.json());
 
     const reposistoryId = response.json()['data']['repository']['id'];
 
