@@ -85,10 +85,12 @@ async function run() {
         'Accept': 'application/json',
         'Authorization': `bearer ${github_token}`,
       }
+    }).then(function(response) {
+      return response.json();
     });
-    console.log(response.json());
+    console.log(response);
 
-    const reposistoryId = response.json()['data']['repository']['id'];
+    const reposistoryId = response['data']['repository']['id'];
 
     query = 'mutation($reposistoryId:Int!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$reposistoryId, base:$base, head:$head}) {}';
     variables = { reposistoryId, base: target_branch, head: commit_sha };
@@ -101,8 +103,10 @@ async function run() {
         'Accept': 'application/json',
         'Authorization': `bearer ${github_token}`,
       }
+    }).then(function(response) {
+      return response.json();
     });
-    console.log(response.json());
+    console.log(response);
   } 
   catch (error) {
     core.setFailed(error.message);
