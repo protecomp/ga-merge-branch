@@ -90,14 +90,14 @@ async function run() {
     });
     console.log(response);
 
-    const reposistoryId = response['data']['repository']['id'];
+    const repositoryId = response['data']['repository']['id'];
 
-    query = 'mutation($reposistoryId:ID!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$reposistoryId, base:$base, head:$head}) {mergeCommit {id}}}';
-    variables = { reposistoryId, base: target_branch, head: commit_sha };
+    query = 'mutation($repositoryId:ID!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$repositoryId, base:$base, head:$head}) {mergeCommit {id}}}';
+    variables = { repositoryId, base: target_branch, head: commit_sha };
 
     response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
-      body: JSON.stringify({query}),
+      body: JSON.stringify({query, variables}),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -107,6 +107,7 @@ async function run() {
       return response.json();
     });
     console.log(response);
+    console.log(`Done! Merge commit: ${response['mutation']['mergeBranch']['mergeCommit']['id']}`)
   } 
   catch (error) {
     core.setFailed(error.message);
