@@ -107,7 +107,7 @@ async function run() {
       return response.json();
     });
     console.log(response);
-    console.log(`Done! Merge commit: ${response['data']['mutation']['mergeBranch']['mergeCommit']['id']}`)
+    console.log(`Done! Merge commit: ${response['data']['mergeBranch']['mergeCommit']['id']}`)
   } 
   catch (error) {
     core.setFailed(error.message);
