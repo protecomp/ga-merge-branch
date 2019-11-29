@@ -64,6 +64,20 @@ module.exports = require("os");
 const core = __webpack_require__(470);
 const fetch = __webpack_require__(454);
 
+async function github_query(github_token, query, variables) {
+  return fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    body: JSON.stringify({query, variables}),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `bearer ${github_token}`,
+    }
+  }).then(function(response) {
+    return response.json();
+  });
+}
+
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
@@ -74,38 +88,30 @@ async function run() {
     console.log(`Merging ${commit_sha} to ${repository}/${target_branch}`);
     console.log("");
 
-    let query = 'query($owner:String!, $name:String!){repository(owner: $owner, name: $name) {id}}';
+    let query = `
+    query($owner:String!, $name:String!){
+      repository(owner: $owner, name: $name) {
+        id
+      }
+    }`;
     let variables = { owner: repository.split("/")[0], name: repository.split("/")[1] };
 
-    let response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      body: JSON.stringify({query, variables}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `bearer ${github_token}`,
-      }
-    }).then(function(response) {
-      return response.json();
-    });
+    let response = await github_query(github_token, query, variables);
     console.log(response);
 
     const repositoryId = response['data']['repository']['id'];
 
-    query = 'mutation($repositoryId:ID!, $base:String!, $head:String!) {mergeBranch(input:{repositoryId:$repositoryId, base:$base, head:$head}) {mergeCommit {url}}}';
+    query = `
+    mutation($repositoryId:ID!, $base:String!, $head:String!) {
+      mergeBranch(input:{repositoryId:$repositoryId, base:$base, head:$head}) {
+        mergeCommit {
+          url
+        }
+      }
+    }`;
     variables = { repositoryId, base: target_branch, head: commit_sha };
 
-    response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      body: JSON.stringify({query, variables}),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `bearer ${github_token}`,
-      }
-    }).then(function(response) {
-      return response.json();
-    });
+    response = await github_query(github_token, query, variables);
     console.log(response);
     console.log(`Done! Merge commit: ${response['data']['mergeBranch']['mergeCommit']['url']}`)
   } 
