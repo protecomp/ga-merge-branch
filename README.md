@@ -1,6 +1,6 @@
-# Merge branch
+# Merge action
 
-A javascript github action to merge a branch to another branch.
+A javascript github action to merge a head to a branch.
 
 # Usage
 
