@@ -5,13 +5,13 @@ inputs:
     description: 'Target branch (e.g. develop)'
     required: true
   commit_sha:
-    description: 'Source commit, use ${{ github.sha }}'
+    description: 'Source commit, use {{ github.sha }}'
     required: true
   repository:
-    description: 'Repository path, use ${{ github.repository }}'
+    description: 'Repository path, use {{ github.repository }}'
     required: true
   github_token:
-    description: 'GitHub token, use ${{ secrets.GITHUB_TOKEN }}'
+    description: 'GitHub token, use {{ secrets.GITHUB_TOKEN }}'
     required: true
 runs:
   using: 'node12'
